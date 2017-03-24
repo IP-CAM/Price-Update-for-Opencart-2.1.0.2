@@ -37,6 +37,16 @@
 					// esconde o valor por unidade
 					$('#valueSingle').hide();
 
+					// verifica se não é um número quebrado
+					function isDecimal(num) {
+					    if(isNaN(num)) { 
+					        return false; 
+					    } 
+					    else {
+					        return parseInt(num) != parseFloat(num);
+					    }
+					}
+
 					$('#input-quantity').blur(function() { 
 
 						// quantidade para multiplicar
@@ -51,7 +61,7 @@
 						var priceView = "";
 					    
 					    // se a quantidade for maior que 0
-					    if(valueQnt > 0){
+					    if(valueQnt > 0 && !isDecimal(valueQnt)){
 					    	// removendo "R$ "
 							newPrice = realPrice.substring(3);
 							// trocando virgula por ponto para fazer a multiplicação
