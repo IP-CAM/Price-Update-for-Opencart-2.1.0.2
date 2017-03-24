@@ -47,6 +47,14 @@
 					    }
 					}
 
+					// converte para money
+					Number.prototype.format = function(n, x, s, c) {
+					    var re = '\\d(?=(\\d{' + (x || 3) + '})+' + (n > 0 ? '\\D' : '$') + ')',
+					        num = this.toFixed(Math.max(0, ~~n));
+					    
+					    return (c ? num.replace('.', c) : num).replace(new RegExp(re, 'g'), '$&' + (s || ','));
+					};
+
 					$('#input-quantity').blur(function() { 
 
 						// quantidade para multiplicar
@@ -64,12 +72,19 @@
 					    if(valueQnt > 0 && !isDecimal(valueQnt)){
 					    	// removendo "R$ "
 							newPrice = realPrice.substring(3);
+							// validando se removeu apenas o "R$ "
+							if(realPrice.substring(0, 3) == "R$ "){
+								newPrice = realPrice.substring(3);
+							}
+							else{
+								newPrice = realPrice.substring(2);
+							}
 							// trocando virgula por ponto para fazer a multiplicação
 							priceCalculate = newPrice.replace(',', '.');
 							// multiplicando
 							priceView = priceCalculate * valueQnt;
 							// retornando para virgula ao inves de ponto
-							price = 'R$ ' + priceView.toString().replace('.', ',');
+							price = 'R$ ' + priceView.format(2, 3, '.', ',');
 							// inserindo na div
 							$('#priceControll').text(price);
 
