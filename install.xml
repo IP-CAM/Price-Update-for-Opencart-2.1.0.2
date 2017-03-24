@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<modification>
+<name>Atualizar preço de acordo com a quantidade</name>
+	<code>Atualizar preço de acordo com a quantidade</code>
+	<version>1.0</version>
+	<author>Fernando Moraes</author>
+	<link>http://www.fermoraes.com.br</link>
+	
+    <file path="catalog/view/theme/*/template/product/product.tpl">	
+    	<operation> 
+		 	<search trim="true"><![CDATA[<h2><?php echo $price; ?></h2>]]></search>
+            <add position="replace"><![CDATA[
+				
+            	<h2 id="priceControll"><?php echo $price; ?></h2>
+
+				<div id="valueSingle">
+					<small>
+						<?php echo $price; ?> por unidade
+					</small>
+				</div>
+            
+            ]]></add>
+        </operation>
+        <operation> 
+		 	<search trim="true"><![CDATA[<label class="control-label" for="input-quantity"><?php echo $entry_qty; ?></label>]]></search>
+            <add position="before"><![CDATA[
+				
+            	<input type="hidden" id="realPrice" value="<?= $price; ?>">
+            
+            ]]></add>
+        </operation>
+        <operation> 
+		 	<search trim="true"><![CDATA[<?php echo $footer; ?>]]></search>
+            <add position="before"><![CDATA[
+				
+				<script type="text/javascript">
+					// esconde o valor por unidade
+					$('#valueSingle').hide();
+
+					$('#input-quantity').blur(function() { 
+
+						// quantidade para multiplicar
+						var valueQnt = $('#input-quantity').val();
+						// preço real, independente de alterações na multiplicação
+						var realPriceView = $('#realPrice').val();
+						// preço para ser calculado
+						var realPrice = $('#realPrice').val();
+						// zerando variaveis
+						var newPrice = "";
+						var priceCalculate = "";
+						var priceView = "";
+					    
+					    // se a quantidade for maior que 0
+					    if(valueQnt > 0){
+					    	// removendo "R$ "
+							newPrice = realPrice.substring(3);
+							// trocando virgula por ponto para fazer a multiplicação
+							priceCalculate = newPrice.replace(',', '.');
+							// multiplicando
+							priceView = priceCalculate * valueQnt;
+							// retornando para virgula ao inves de ponto
+							price = 'R$ ' + priceView.toString().replace('.', ',');
+							// inserindo na div
+							$('#priceControll').text(price);
+
+							if(valueQnt == 1)
+								$('#valueSingle').hide();
+							else
+								$('#valueSingle').show();
+					    }
+					    else{
+					    	$('#valueSingle').hide();
+					    	$('#input-quantity').val(1);
+					    	$('#priceControll').text(realPriceView);
+					    }
+					});	
+				</script>
+            
+            ]]></add>
+        </operation>		
+    </file>
+</modification>
